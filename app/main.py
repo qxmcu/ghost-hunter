@@ -251,6 +251,12 @@ async def process_issue(payload: WebhookPayload):
                 sandbox_result["logs"] = str(e)
                 break
             
+            # CRITICAL SECURITY OVERRIDE:
+            # Never trust the LLM to decide if it gets network access.
+            # Force the execution stage to run air-gapped unless the repo owner 
+            # explicitly opted in via ghost.yml
+            repro_context.requires_network = repo_config.get("allowed_network_access", False)
+            
             # Pass the repo full name and config to the sandbox
             try:
                 sandbox_result = sandbox.run_reproduction(repro_context, repo_full_name, repo_config)

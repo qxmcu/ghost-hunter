@@ -964,6 +964,10 @@ def test_f4_sandbox_run_requires_network_true(monkeypatch, mock_github_api):
     Test 18: Sandbox run with requires_network=True: verifies that Stage 2 execution
     does NOT disconnect network.
     """
+    
+    async def mock_get_repo_file(repo, path, token):
+        return "ghost:\n  allowed_network_access: true\n"
+    monkeypatch.setattr("app.services.github_service.GitHubService.get_repo_file", mock_get_repo_file)
 
     class NetworkTrueCompletions:
         async def create(self, *args, **kwargs):
