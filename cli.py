@@ -19,8 +19,15 @@ def print_info(msg):
     click.echo(Fore.CYAN + "→ " + msg + Style.RESET_ALL)
 
 def hash_password(password: str) -> str:
-    """Creates a simple SHA-256 hash for local CLI password locking."""
-    return hashlib.sha256(password.encode()).hexdigest()
+    """Creates a PBKDF2 hash for local CLI password locking."""
+    # Using PBKDF2 with 100,000 iterations to mitigate brute force attacks
+    return hashlib.pbkdf2_hmac('sha256', password.encode(), b'ghost-local-salt', 100000).hexdigest()
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    """Verifies a password against a stored hash, supporting legacy SHA256 hashes."""
+    if stored_hash == hashlib.sha256(password.encode()).hexdigest():
+        return True
+    return stored_hash == hash_password(password)
 
 def print_error(msg):
     click.echo(f"Error: {msg}", err=True)
@@ -310,7 +317,6 @@ def profile_view():
         print_error("No config found.")
         
     password = click.prompt("Enter CLI Password", hide_input=True)
-    pw_hash = hash_password(password)
     
     with open(CONFIG_FILE, "r") as f:
         lines = f.readlines()
@@ -321,7 +327,7 @@ def profile_view():
             stored_hash = line.split("=", 1)[1].strip()
             break
             
-    if stored_hash and pw_hash != stored_hash:
+    if stored_hash and not verify_password(password, stored_hash):
         print_error("Incorrect password. Access denied.")
         
     print_info("Configuration Credentials:")
@@ -376,7 +382,6 @@ def profile_edit(field, name):
         sys.exit(1)
         
     password = click.prompt("Enter CLI Password", hide_input=True)
-    pw_hash = hash_password(password)
     
     with open(target_file, "r") as f:
         lines = f.readlines()
@@ -387,7 +392,7 @@ def profile_edit(field, name):
             stored_hash = line.split("=", 1)[1].strip()
             break
             
-    if stored_hash and pw_hash != stored_hash:
+    if stored_hash and not verify_password(password, stored_hash):
         print_error("Incorrect password. Access denied.")
         sys.exit(1)
         

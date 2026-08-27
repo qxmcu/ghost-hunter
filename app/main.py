@@ -348,7 +348,7 @@ async def github_webhook(request: Request, background_tasks: BackgroundTasks):
     
     logger.info(f"DEBUG: ALL HEADERS RECEIVED: {dict(request.headers)}")
     logger.info(f"DEBUG: Received signature header: {signature}")
-    logger.info(f"DEBUG: My loaded WEBHOOK_SECRET is: {settings.WEBHOOK_SECRET}")
+    # SECURITY FIX: Removed clear-text logging of WEBHOOK_SECRET
 
     if not GitHubService.verify_webhook_signature(body, signature):
         logger.error("DEBUG: verify_webhook_signature returned False!")
