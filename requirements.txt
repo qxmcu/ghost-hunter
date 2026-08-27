@@ -1,0 +1,16 @@
+ # Web Framework & Server
+    fastapi==0.111.0
+    uvicorn==0.30.1
+
+    # Configuration Management
+    pydantic==2.7.4
+    pydantic-settings==2.3.4
+
+    # LLM Integration
+    openai==1.35.3
+
+    # Docker API
+    docker==7.1.0
+
+    # HTTP Client (for Webhook validation & GitHub API)
+    httpx==0.27.0

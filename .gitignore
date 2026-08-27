@@ -1,0 +1,55 @@
+# --- Secrets & local config (CRITICAL - never commit these) ---
+.env
+.env.*
+*.pem
+config.env
+.ghost/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+*.egg
+
+# --- Test / lint / type-check caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+cover_agent_unit_test_runs.db
+.secrets.baseline
+
+# --- Logs & local runtime artifacts ---
+*.log
+run.log
+stored_responses/
+
+# --- Local dev scaffolding (not part of the shipped tool) ---
+PROJECT.md
+TEST_READY.md
+TEST_INFRA.md
+ORIGINAL_REQUEST.md
+ghost_hunter_commands.txt
+complete_setup.bat
+universal_llm_setup.bat
+last_setup.bat
+setup.bat
+setup.sh
+startup_config.bat
+cloudflared.exe
+
+# --- OS / editor cruft ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.agents/
+ghost.spec
+complete_setup.sh
+test_webhook.py
+Dockerfile.dockerfile
