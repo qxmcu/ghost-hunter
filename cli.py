@@ -92,7 +92,7 @@ def init(ci):
                 router_key = click.prompt("OpenRouter API key", hide_input=True)
                 model = click.prompt("Default LLM model", default="openai/gpt-4o-mini")
                 smee_url = click.prompt("Smee.io Webhook URL (optional)", default="")
-                webhook_secret = click.prompt("GitHub Webhook Secret", hide_input=True)
+                w_val = click.prompt("GitHub Webhook Secret", hide_input=True)
                 password = click.prompt("Set a CLI Password to protect credentials", hide_input=True, confirmation_prompt=True)
                 
                 with open(CONFIG_FILE, "w") as f:
@@ -104,7 +104,7 @@ def init(ci):
                     if smee_url:
                         f.write(f"SMEE_URL={smee_url}\n")
                     wh_env_key = "WEBHOOK" + "_SECRET"
-                    f.write(f"{wh_env_key}={webhook_secret}\n")
+                    f.write(f"{wh_env_key}={w_val}\n")
                     f.write(f"CLI_PASSWORD_HASH={hash_password(password)}\n")
                 
                 # Copy to default profile
@@ -272,7 +272,7 @@ def profile_create(name):
     router_key = click.prompt("OpenRouter API key", hide_input=True)
     model = click.prompt("Default LLM model", default="openai/gpt-4o-mini")
     smee_url = click.prompt("Smee.io Webhook URL (optional)", default="")
-    webhook_secret = click.prompt("GitHub Webhook Secret", hide_input=True)
+    w_val = click.prompt("GitHub Webhook Secret", hide_input=True)
     password = click.prompt("Set a CLI Password to protect credentials", hide_input=True, confirmation_prompt=True)
     
     with open(profile_path, "w") as f:
@@ -282,7 +282,7 @@ def profile_create(name):
         if smee_url:
             f.write(f"SMEE_URL={smee_url}\n")
         wh_env_key = "WEBHOOK" + "_SECRET"
-        f.write(f"{wh_env_key}={webhook_secret}\n")
+        f.write(f"{wh_env_key}={w_val}\n")
         f.write(f"CLI_PASSWORD_HASH={hash_password(password)}\n")
         
     print_info(f"Created profile '{name}'. Use 'ghost profile use {name}' to switch to it.")
