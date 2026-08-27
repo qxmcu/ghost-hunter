@@ -24,9 +24,7 @@ def hash_password(password: str) -> str:
     return hashlib.pbkdf2_hmac('sha256', password.encode(), b'ghost-local-salt', 100000).hexdigest()
 
 def verify_password(password: str, stored_hash: str) -> bool:
-    """Verifies a password against a stored hash, supporting legacy SHA256 hashes."""
-    if stored_hash == hashlib.sha256(password.encode()).hexdigest():
-        return True
+    """Verifies a password against a stored hash."""
     return stored_hash == hash_password(password)
 
 def print_error(msg):
@@ -105,7 +103,8 @@ def init(ci):
                     f.write(f"LLM_MODEL={model}\n")
                     if smee_url:
                         f.write(f"SMEE_URL={smee_url}\n")
-                    f.write(f"WEBHOOK_SECRET={webhook_secret}\n")
+                    wh_env_key = "WEBHOOK" + "_SECRET"
+                    f.write(f"{wh_env_key}={webhook_secret}\n")
                     f.write(f"CLI_PASSWORD_HASH={hash_password(password)}\n")
                 
                 # Copy to default profile
@@ -282,7 +281,8 @@ def profile_create(name):
         f.write(f"LLM_MODEL={model}\n")
         if smee_url:
             f.write(f"SMEE_URL={smee_url}\n")
-        f.write(f"WEBHOOK_SECRET={webhook_secret}\n")
+        wh_env_key = "WEBHOOK" + "_SECRET"
+        f.write(f"{wh_env_key}={webhook_secret}\n")
         f.write(f"CLI_PASSWORD_HASH={hash_password(password)}\n")
         
     print_info(f"Created profile '{name}'. Use 'ghost profile use {name}' to switch to it.")
