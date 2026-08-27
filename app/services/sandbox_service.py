@@ -78,13 +78,21 @@ class SandboxService:
                 network_mode="bridge",
                 working_dir="/workspace",
                 remove=False,
+                cap_add=["NET_ADMIN"],
             )
 
             # --- STAGE 1: SETUP (Network Enabled) ---
             logger.info("Stage 1: Cloning repository and installing dependencies...")
             
             # Force non-interactive apt-get to prevent hanging on tzdata and others
-            install_cmds = ["export DEBIAN_FRONTEND=noninteractive", "apt-get update && apt-get install -yq git"]
+            install_cmds = ["export DEBIAN_FRONTEND=noninteractive", "apt-get update && apt-get install -yq git iproute2 libcap2-bin"]
+            
+            # Prevent DNS Rebinding SSRF by blackholing cloud metadata and RFC1918 networks
+            install_cmds.append("ip route add blackhole 169.254.169.254/32 || true")
+            install_cmds.append("ip route add blackhole 10.0.0.0/8 || true")
+            install_cmds.append("ip route add blackhole 172.16.0.0/12 || true")
+            install_cmds.append("ip route add blackhole 192.168.0.0/16 || true")
+            
             if context.required_packages:
                 install_cmds.append(f"apt-get install -yq {' '.join(context.required_packages)}")
             
@@ -123,9 +131,14 @@ class SandboxService:
             # We use set +e so we can capture the actual crash traceback without the shell exiting silently
             repro_script = "\n".join(context.reproduction_commands)
             # CRITICAL FIX: Wrap in 'timeout' to prevent malicious or accidental infinite loops from hanging
+            # SECONDARY FIX: Drop NET_ADMIN via capsh so the payload cannot delete the blackhole routes
             host_timeout = float(timeout_sec) + 20.0
+            
+            # Use capsh if available, fallback to direct execution (alpine, etc) if not
+            wrapper_cmd = ["sh", "-c", f"if command -v capsh >/dev/null; then capsh --drop=cap_net_admin -- -c 'timeout {timeout_sec} /bin/sh -c \"$1\"'; else timeout {timeout_sec} /bin/sh -c \"$1\"; fi", "--", repro_script]
+            
             exit_code, output = self._exec_run_with_timeout(
-                container, ["timeout", timeout_sec, "/bin/sh", "-c", repro_script], "/workspace", host_timeout
+                container, wrapper_cmd, "/workspace", host_timeout
             )
             repro_logs = output.decode("utf-8", errors="replace")
             logs += f"\n--- STAGE 2: EXECUTION ---\n{repro_logs}\n"
