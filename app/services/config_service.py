@@ -14,6 +14,7 @@ class ConfigService:
             "timeout": 60,
             "max_retries": 3,
             "allowed_base_images": [],
+            "allowed_network_access": False,
             "resource_limits": {
                 "cpus": 1024,
                 "memory": "2g"
