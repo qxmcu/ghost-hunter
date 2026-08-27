@@ -1,5 +1,3 @@
-<div align="center">
-
 ```
    _____ _               _     _   _             _
   / ____| |             | |   | | | |           | |
@@ -8,7 +6,7 @@
  | |__| | | | | (_) \__ \ |_  | | | | |_| | | | | ||  __/ |
   \_____|_| |_|\___/|___/\__| |_| |_|\__,_|_| |_|\__\___|_|
 ```
-
+<div align="center">
 **Automated AI Bug Reproduction Engine**
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://python.org)
