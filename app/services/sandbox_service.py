@@ -79,6 +79,7 @@ class SandboxService:
                 working_dir="/workspace",
                 remove=False,
                 cap_add=["NET_ADMIN"],
+                dns=["8.8.8.8", "8.8.4.4"],
             )
 
             # --- STAGE 1: SETUP (Network Enabled) ---
