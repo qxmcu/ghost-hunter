@@ -13,6 +13,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)]()
 
+<a href="https://www.producthunt.com/products/ghost-hunter-2?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-ghost-hunter-2" target="_blank" rel="noopener noreferrer"><img alt="Ghost Hunter - Turn bug reports into reproduced crashes, automatically. | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1234561&amp;theme=neutral&amp;t=1787909076478"></a>
+
 *Stop chasing ghosts. Start reproducing them.*
 
 </div>
