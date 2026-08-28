@@ -287,6 +287,10 @@ Because Ghost Hunter orchestrates multiple complex systems (Docker, LLMs, and Gi
 
 If you want to contribute code, we are actively looking for help battle-testing the GitHub App authentication path (Option B) across different repository permission structures!
 
+## ⭐️ Show your support
+
+If you find Ghost Hunter helpful, I would be incredibly grateful if you could give this repository a star! It helps others discover the project and keeps the project growing. 🌟
+
 ---
 
 ## 📜 License
