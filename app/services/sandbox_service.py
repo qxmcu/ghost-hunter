@@ -123,10 +123,14 @@ class SandboxService:
             network_ids = []
             if not context.requires_network:
                 logger.info("Stage 2: Disconnecting network for secure air-gapped execution...")
+                container.reload() # Refresh attrs to ensure NetworkID is populated
                 for net_name, network_info in container.attrs['NetworkSettings']['Networks'].items():
-                    net_id = network_info['NetworkID']
+                    net_id = network_info.get('NetworkID') or net_name
                     network_ids.append(net_id)
-                    self.client.networks.get(net_id).disconnect(container)
+                    try:
+                        self.client.networks.get(net_id).disconnect(container)
+                    except Exception as e:
+                        logger.warning(f"Failed to disconnect network {net_id}: {e}")
             
             logger.info("Stage 2: Running reproduction commands...")
             # We use set +e so we can capture the actual crash traceback without the shell exiting silently
@@ -158,7 +162,10 @@ class SandboxService:
                 # Re-enable network for bisect checking out packages
                 if not context.requires_network:
                     for net_id in network_ids:
-                        self.client.networks.get(net_id).connect(container)
+                        try:
+                            self.client.networks.get(net_id).connect(container)
+                        except Exception as e:
+                            logger.warning(f"Failed to reconnect network {net_id}: {e}")
                 
                 # CRITICAL FIX: Use base64 to write files to avoid Nested Heredoc Bash Injection!
                 # If the LLM generated script contains an 'EOF', it would prematurely terminate our outer heredoc.
