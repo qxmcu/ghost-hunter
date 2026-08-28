@@ -27,6 +27,12 @@ Ghost Hunter is an autonomous, AI-driven DevOps CLI tool that automatically repr
 
 ---
 
+## 🎥 Demo Usage
+
+[![Ghost Hunter Demo](https://img.youtube.com/vi/lv9QF6Nr_fA/maxresdefault.jpg)](https://youtu.be/lv9QF6Nr_fA "Watch the Ghost Hunter 4K Demo")
+
+---
+
 ## 🏗️ Architecture & Workflow
 
 1. **Trigger:** A user comments `bot/reproduce` on a GitHub issue.
