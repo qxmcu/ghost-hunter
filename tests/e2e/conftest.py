@@ -50,6 +50,9 @@ class MockContainer:
             }
         }
 
+    def reload(self):
+        pass
+
     def exec_run(self, cmd, workdir=None):
         script = ""
         if isinstance(cmd, list) and len(cmd) >= 4:

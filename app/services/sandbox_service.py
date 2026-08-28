@@ -80,6 +80,7 @@ class SandboxService:
                 remove=False,
                 cap_add=["NET_ADMIN"],
                 dns=["8.8.8.8", "8.8.4.4"],
+                sysctls={'net.ipv6.conf.all.disable_ipv6': '1'},
             )
 
             # --- STAGE 1: SETUP (Network Enabled) ---
