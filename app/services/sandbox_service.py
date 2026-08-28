@@ -139,8 +139,9 @@ class SandboxService:
             # SECONDARY FIX: Drop NET_ADMIN via capsh so the payload cannot delete the blackhole routes
             host_timeout = float(timeout_sec) + 20.0
             
-            # Use capsh if available, fallback to direct execution (alpine, etc) if not
-            wrapper_cmd = ["sh", "-c", f"if command -v capsh >/dev/null; then capsh --drop=cap_net_admin -- -c 'timeout {timeout_sec} /bin/sh -c \"$1\"'; else timeout {timeout_sec} /bin/sh -c \"$1\"; fi", "--", repro_script]
+            # Use base64 to completely bypass all shell quoting and capsh argument-dropping issues
+            b64_script = base64.b64encode(repro_script.encode()).decode()
+            wrapper_cmd = ["sh", "-c", f"if command -v capsh >/dev/null; then capsh --drop=cap_net_admin -- -c 'echo {b64_script} | base64 -d | timeout {timeout_sec} /bin/sh'; else echo {b64_script} | base64 -d | timeout {timeout_sec} /bin/sh; fi"]
             
             exit_code, output = self._exec_run_with_timeout(
                 container, wrapper_cmd, "/workspace", host_timeout
