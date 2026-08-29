@@ -55,15 +55,26 @@ class MockContainer:
 
     def exec_run(self, cmd, workdir=None):
         script = ""
-        if isinstance(cmd, list) and len(cmd) >= 4:
-            script = cmd[-1]
+        if isinstance(cmd, list):
+            if len(cmd) >= 4:
+                script = cmd[-1]
+            elif len(cmd) >= 3 and "base64 -d" in cmd[2]:
+                import base64
+                import re
+                match = re.search(r"echo ([A-Za-z0-9+/=]+) \| base64 -d", cmd[2])
+                if match:
+                    script = base64.b64decode(match.group(1)).decode()
+                else:
+                    return (1, f"REGEX FAILED ON: {cmd[2]}".encode())
 
         if "git clone" in script:
             return (0, b"Stage 1 Setup Success - cloned repo")
         elif "git bisect" in script:
             return (0, b"d3b07384d113edec49eaa6238ad5ff00 is the first bad commit\n")
+        elif "LLM Parsing Failed" in script:
+            return (1, b"LLM Parsing Failed")
         else:
-            return (0, b"AssertionError: expected error reproduced! key: reproduced")
+            return (0, f"FALLBACK RETURN. Script was: {script}, cmd was: {cmd}".encode())
 
     def remove(self, **kwargs):
         pass

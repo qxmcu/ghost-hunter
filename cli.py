@@ -16,7 +16,7 @@ from pathlib import Path
 
 # Setup basic strict logging structure
 def print_info(msg):
-    click.echo(Fore.CYAN + "→ " + msg + Style.RESET_ALL)
+    click.echo(Fore.CYAN + "-> " + msg + Style.RESET_ALL)
 
 def hash_password(password: str) -> str:
     """Creates a PBKDF2 hash for local CLI password locking."""
@@ -46,7 +46,7 @@ ASCII_LOGO = r"""
  | |__| | | | | (_) \__ \ |_  | | | | |_| | | | | ||  __/ |   
   \_____|_| |_|\___/|___/\__| |_| |_|\__,_|_| |_|\__\___|_|   
 
-  v1.0.0 — Automated bug reproduction engine
+  v1.0.0 - Automated bug reproduction engine
   @qxmcu
 """
 

@@ -92,7 +92,16 @@ def setup_test_env(monkeypatch, mock_github_api):
 
     # Monkeypatch MockContainer.exec_run to return the script content if not clone/bisect
     def mock_exec_run(self, cmd, workdir=None):
-        script = cmd[-1] if isinstance(cmd, list) and len(cmd) >= 4 else ""
+        script = ""
+        if isinstance(cmd, list):
+            if len(cmd) >= 4:
+                script = cmd[-1]
+            elif len(cmd) >= 3 and "base64 -d" in cmd[2]:
+                import base64
+                import re
+                match = re.search(r"echo ([A-Za-z0-9+/=]+) \| base64 -d", cmd[2])
+                if match:
+                    script = base64.b64decode(match.group(1)).decode()
         if "git clone" in script:
             return (0, b"Stage 1 Setup Success - cloned repo")
         elif "git bisect" in script:
@@ -1060,10 +1069,18 @@ def test_f4_retry_loop_max_retries(monkeypatch, mock_github_api):
 
     # Mock reproduction execution to fail (return expected_found=False)
     def mock_exec_run(self, cmd, workdir=None):
-        script = cmd[-1] if isinstance(cmd, list) and len(cmd) >= 4 else ""
+        script = ""
+        if isinstance(cmd, list):
+            if len(cmd) >= 4:
+                script = cmd[-1]
+            elif len(cmd) >= 3 and "base64 -d" in cmd[2]:
+                import base64
+                import re
+                match = re.search(r"echo ([A-Za-z0-9+/=]+) \| base64 -d", cmd[2])
+                if match:
+                    script = base64.b64decode(match.group(1)).decode()
         if "git clone" in script:
             return (0, b"Stage 1 Setup Success")
-        # Repro fails to find expected error keyword
         return (1, b"some failure log output")
 
     monkeypatch.setattr("tests.e2e.conftest.MockContainer.exec_run", mock_exec_run)
