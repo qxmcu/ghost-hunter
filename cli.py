@@ -89,8 +89,9 @@ def init(ci):
             else:
                 app_id = click.prompt("GitHub App ID (or leave blank if using a PAT)", default="")
                 pat = click.prompt("GitHub PAT (or GitHub App RSA PEM Key)", hide_input=True)
-                router_key = click.prompt("OpenRouter API key", hide_input=True)
+                router_key = click.prompt("LLM API key (OpenRouter, OpenCode Zen, OpenAI, etc.)", hide_input=True)
                 model = click.prompt("Default LLM model", default="openai/gpt-4o-mini")
+                base_url = click.prompt("Custom LLM Base URL (Optional, e.g. OpenCode Zen)", default="")
                 smee_url = click.prompt("Smee.io Webhook URL (optional)", default="")
                 w_val = click.prompt("GitHub Webhook Secret", hide_input=True)
                 password = click.prompt("Set a CLI Password to protect credentials", hide_input=True, confirmation_prompt=True)
@@ -101,6 +102,8 @@ def init(ci):
                     f.write(f"GITHUB_PRIVATE_KEY={pat}\n")
                     f.write(f"LLM_API_KEY={router_key}\n")
                     f.write(f"LLM_MODEL={model}\n")
+                    if base_url:
+                        f.write(f"LLM_BASE_URL={base_url}\n")
                     if smee_url:
                         f.write(f"SMEE_URL={smee_url}\n")
                     wh_env_key = "WEBHOOK" + "_SECRET"
@@ -269,8 +272,9 @@ def profile_create(name):
         
     click.echo(f"Creating new profile: {name}")
     pat = click.prompt("GitHub PAT", hide_input=True)
-    router_key = click.prompt("OpenRouter API key", hide_input=True)
+    router_key = click.prompt("LLM API key (OpenRouter, OpenCode Zen, OpenAI, etc.)", hide_input=True)
     model = click.prompt("Default LLM model", default="openai/gpt-4o-mini")
+    base_url = click.prompt("Custom LLM Base URL (Optional, e.g. OpenCode Zen)", default="")
     smee_url = click.prompt("Smee.io Webhook URL (optional)", default="")
     w_val = click.prompt("GitHub Webhook Secret", hide_input=True)
     password = click.prompt("Set a CLI Password to protect credentials", hide_input=True, confirmation_prompt=True)
@@ -279,6 +283,8 @@ def profile_create(name):
         f.write(f"GITHUB_PRIVATE_KEY={pat}\n")
         f.write(f"LLM_API_KEY={router_key}\n")
         f.write(f"LLM_MODEL={model}\n")
+        if base_url:
+            f.write(f"LLM_BASE_URL={base_url}\n")
         if smee_url:
             f.write(f"SMEE_URL={smee_url}\n")
         wh_env_key = "WEBHOOK" + "_SECRET"
@@ -369,7 +375,7 @@ def profile_clean(name):
     print_info(f"Cleaned up {cleaned_count} formatting issues in {target_file.name}.")
 
 @profile.command(name="edit")
-@click.argument("field", type=click.Choice(["pat", "api", "model", "url", "webhook", "appid"]))
+@click.argument("field", type=click.Choice(["pat", "api", "model", "baseurl", "url", "webhook", "appid"]))
 @click.option("--name", help="The specific profile to edit (defaults to the currently active configuration).")
 def profile_edit(field, name):
     """Edit a specific configuration field (Requires Password)."""
@@ -400,6 +406,7 @@ def profile_edit(field, name):
         "pat": "GITHUB_PRIVATE_KEY",
         "api": "LLM_API_KEY",
         "model": "LLM_MODEL",
+        "baseurl": "LLM_BASE_URL",
         "url": "SMEE_URL",
         "webhook": "WEBHOOK_SECRET",
         "appid": "GITHUB_APP_ID"
